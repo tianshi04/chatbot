@@ -11,7 +11,8 @@
 ### Steps to Install
 1. Clone the repository:
 ```bash
-git clone https://github.com/tianshi04/chatbot.git & cd chatbot
+git clone https://github.com/tianshi04/chatbot.git
+cd chatbot
 
 ```
 2. Install the dependencies:
