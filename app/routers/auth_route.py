@@ -18,7 +18,7 @@ REDIRECT_URI = os.getenv("REDIRECT_URI")
 scope = "email profile"
 
 @router.get("/login")
-def login_with_google():
+async def login_with_google():
     login_url = (
         "https://accounts.google.com/o/oauth2/auth?"
         f"client_id={CLIENT_ID}&"
@@ -29,7 +29,7 @@ def login_with_google():
     return RedirectResponse(login_url)
 
 @router.get("/callback")
-def google_callback(code: str, response: Response):
+async def google_callback(code: str, response: Response):
     try:
         token_response = requests.post(
         "https://oauth2.googleapis.com/token",
@@ -67,6 +67,6 @@ async def google_callback_from_web(respone: Response, token: Annotated[GoogleTok
         
 
 @router.get("/logout")
-def logout(response: Response):
+async def logout(response: Response):
     response.set_cookie("access_token", "", expires=0)
     return {"message": "Đăng xuất thành công"}
