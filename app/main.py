@@ -1,8 +1,18 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import time
+from dotenv import load_dotenv
+from typing import Annotated
+
+from app.routers import auth_route
+from app.dependencies import get_current_email
+
+# Load .env file
+load_dotenv()
 
 app = FastAPI()
+
+app.include_router(auth_route.router, prefix="/auth", tags=["auth"])
 
 origins = [
     "http://localhost:8080",
