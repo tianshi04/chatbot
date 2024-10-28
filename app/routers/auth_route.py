@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Body, HTTPException
 from fastapi.responses import RedirectResponse
 import os
+from app.models.google_token import GoogleToken
 from app.utils.token_utils import create_access_token
 from dotenv import load_dotenv
 import requests
 from typing import Annotated
+from google.oauth2 import id_token
+from google.auth.transport import requests as googleRequest
 
 router = APIRouter()
 
@@ -50,6 +53,18 @@ def google_callback(code: str, response: Response):
         return {"message": "Successfully logged in"}
     except Exception:
         return {"message": "Failed to log in"}
+
+@router.post("/callback")
+async def google_callback_from_web(respone: Response, token: Annotated[GoogleToken, Body()]):
+    try:
+        idinfo = id_token.verify_oauth2_token(token.token, googleRequest.Request(), CLIENT_ID)
+        email = idinfo['email']
+        access_token = create_access_token({ "sub": email })
+        respone.set_cookie("access_token", access_token, httponly=True, samesite="Lax")
+        return {"message": "Successfully logged in"}
+    except ValueError as e:
+        return HTTPException(status_code=400, detail=str(e))
+        
 
 @router.get("/logout")
 def logout(response: Response):

@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import time
 from dotenv import load_dotenv
 from typing import Annotated
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 from app.routers import auth_route
 from app.dependencies import get_current_email
@@ -13,6 +16,11 @@ load_dotenv()
 app = FastAPI()
 
 app.include_router(auth_route.router, prefix="/auth", tags=["auth"])
+
+templates = Jinja2Templates(directory="./frontend/public/pages")
+
+app.mount("/public", StaticFiles(directory="./frontend/public"), name="public")
+app.mount("/src", StaticFiles(directory="./frontend/src"), name="src")
 
 origins = [
     "http://localhost:8080",
@@ -38,3 +46,7 @@ async def add_process_time_header(request: Request, call_next):
 @app.get("/")
 async def root():
     return {"mesage": "Hello World"}
+
+@app.get("/login")
+async def login_page(request: Request):
+    return templates.TemplateResponse(name="login.html", context={"request": request})
