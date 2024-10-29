@@ -1,13 +1,16 @@
-from fastapi import Cookie, HTTPException, status
+from fastapi import Cookie, HTTPException, Query, status
 import jwt
 from dotenv import load_dotenv
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Annotated
+from itsdangerous import URLSafeTimedSerializer
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
+serializer = URLSafeTimedSerializer(SECRET_KEY)
+token_lifetime = timedelta(minutes=5)
 
 def get_current_email(access_token: Annotated[str, Cookie()] = None):
     credentials_exception = HTTPException(
@@ -41,3 +44,11 @@ def get_current_email(access_token: Annotated[str, Cookie()] = None):
         raise credentials_exception
     
     return email
+
+def get_curent_email_onetimetoken(onetimetoken: Annotated[str, Query()] = None):
+    try:
+        email = serializer.loads(onetimetoken, salt=SECRET_KEY, max_age=token_lifetime.total_seconds())
+        return email
+    
+    except Exception:
+        raise HTTPException(status_code=400, detail="Tokenis invalid or has expired")
