@@ -1,39 +1,54 @@
+import json
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request, Response, WebSocket, WebSocketDisconnect
 
 from app.dependencies import get_current_email, get_curent_email_onetimetoken
 from app.utils.token_utils import create_onetimetoken
+from app.utils.aiutils import crate_new_chat_session
 
 router = APIRouter()
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: list[WebSocket] = []
+        self.active_connections: dict[str, WebSocket] = {}
         
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket, email: str):
         await websocket.accept()
-        self.active_connections.append(websocket)
+        self.active_connections[email] = websocket
+        print(f"{email} connected.")
         
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
+    def disconnect(self, email: str):
+        if email in self.active_connections:
+            del self.active_connections[email]
+            print(f"{email} disconnected.")
 
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
+    async def send_personal_message(self, message: str, email: str):
+        websocket = self.active_connections.get(email)
+        if websocket:
+            payload = json.dumps({ "type": "message", "message": message})
+            await websocket.send_text(payload)
         
     async def broadcast(self, message: str):
-        for connection in self.active_connections:
+        for email, connection in self.active_connections.items():
             await connection.send_text(message)
             
 manager = ConnectionManager()
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket, email: Annotated[str, Depends(get_curent_email_onetimetoken)]):
-    await websocket.accept()
+    await manager.connect(websocket, email)
     try:
+        chat_session = crate_new_chat_session()
         while True:
             data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"{email} says: {data}")
+            message_data = json.loads(data)
+            
+            if message_data["type"] == "new_chat" and message_data["message"] == 0:    
+                chat_session = crate_new_chat_session(history=[])
+            elif message_data["type"] == "message":
+                response = chat_session.send_message(message_data["message"])
+                await manager.send_personal_message(response.text, email)
+            
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast(f"{email} left the chat")

@@ -167,7 +167,8 @@
           </div>
           <div class="md:pt-0 dark:border-white/20 md:border-transparent md:dark:border-transparent w-full">
             <div class="m-auto h-24 px-3 md:px-4 w-full md:px-5 lg:px-4 xl:px-5 grid place-items-center">
-              <input class="input rounded-full w-full px-5 flex bg-base-300" />
+              <input id="message-input" class="input rounded-full w-full px-5 flex bg-base-300" />
+              <button id="send-btn" class="btn btn-primary"></button>
             </div>
             <div class="relative w-full px-2 py-2 text-center text-xs text-token-text-secondary empty:hidden md:px-[60px]">
               <div class="min-h-4">
@@ -179,5 +180,7 @@
       </main>
     </div>
   </div>
+  
+  <script src="/src/pages/home/home.js"></script>
 </body>
 </html>
