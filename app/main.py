@@ -50,3 +50,7 @@ async def root():
 @app.get("/login")
 async def login_page(request: Request):
     return templates.TemplateResponse(name="login.html", context={"request": request})
+
+@app.get("/home")
+async def home_page(request: Request, email: Annotated[str, Depends(get_current_email)]):
+    return templates.TemplateResponse(name="new_home.html", context={"request": request, "email": email})

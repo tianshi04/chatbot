@@ -47,6 +47,7 @@ async def google_callback(code: str, response: Response):
             "https://www.googleapis.com/oauth2/v1/userinfo",
             headers={"Authorization": f"Bearer {google_access_token}"},
         )
+        print(user_info_response.json())
         # TODO: Save user info to database
         access_token = create_access_token({ "sub": user_info_response.json().get("email") })
         response.set_cookie("access_token", access_token, httponly=True, samesite="Lax")

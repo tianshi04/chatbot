@@ -1,0 +1,21 @@
+.no-draggable {
+    user-select: none;
+}
+
+.composer-parent {
+    --composer-footer_height: var(--composer-bar_footer-current-height,32px);
+    --composer-bar_height: var(--composer-bar_current-height,52px);
+    --composer-bar_width: var(--composer-bar_current-width,768px);
+    --mask-fill: linear-gradient(180deg,#fff 0%,#fff);
+    --mask-erase: linear-gradient(180deg,#000 0%,#000)
+}
+
+.react-scroll-to-bottom--css-njqpn-79elbk {
+    position: relative;
+}
+
+.react-scroll-to-bottom--css-njqpn-1n7m0yu {
+    height: 100%;
+    overflow-y: auto;
+    width: 100%;
+}

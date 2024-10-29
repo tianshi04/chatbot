@@ -24,7 +24,7 @@ pip install -r requirements.txt
 ## Usage
 Running the Flask Server
 ```bash
-python app.py
+uvicorn app.main:app --reload
 
 ```
 
