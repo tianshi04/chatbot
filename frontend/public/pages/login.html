@@ -1,21 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="flex items-center justify-center h-screen bg-gray-100">
-    <button id="login-btn" class="flex items-center px-6 py-3 bg-white text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-100 focus:outline-none border border-gray-300">
-        <img src="https://th.bing.com/th?id=ODLS.4fa32477-c059-4e6f-bdda-4eb51c372ca3&w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2" alt="Google logo" class="w-6 h-6 mr-2">
-        Login with Google
-    </button>
-
-    <script src="/src/pages/login/login.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,8 +6,9 @@
     <title>Login</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="/src/pages/login/login.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
+  <body class="flex items-center justify-center min-h-screen bg-gray-100">
     <div id="g_id_onload"
      data-client_id="107320473100-k58pa5bs0d29nu6gno263bjpv4utr0ij.apps.googleusercontent.com"
      data-context="signin"
