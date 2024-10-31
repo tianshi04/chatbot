@@ -103,6 +103,7 @@ document
 function send_new_chat() {
   client.sendMessage("new_chat", 0);
   clearChatContainer();
+  addMessageToChatContainer("Hello, how can I help you?", false);
 }
 
 function send_message(message) {

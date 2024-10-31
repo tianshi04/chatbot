@@ -10,6 +10,9 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from app.routers import auth_route
 from app.dependencies import get_current_email
 from app.routers import websocket_route
+from pymongo.database import Database
+from app.database import get_db
+from app.services.user_service import find_user_by_email
 
 # Load .env file
 load_dotenv()
@@ -55,5 +58,6 @@ async def login_page(request: Request):
     return templates.TemplateResponse(name="login.html", context={"request": request})
 
 @app.get("/home")
-async def home_page(request: Request):
-    return templates.TemplateResponse(name="new_home.html", context={"request": request})
+async def home_page(request: Request, db: Annotated[Database, Depends(get_db)], email: Annotated[str, Depends(get_current_email)]):
+    user_data = find_user_by_email(db, email)
+    return templates.TemplateResponse(name="new_home.html", context={"request": request, "user_data": user_data})
