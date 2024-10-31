@@ -48,15 +48,15 @@ async def add_process_time_header(request: Request, call_next):
 @app.get("/")
 async def root():
     # return {"mesage": "Hello World"}
-    return RedirectResponse("/test")
+    return RedirectResponse("/home")
 
 @app.get("/login")
 async def login_page(request: Request):
     return templates.TemplateResponse(name="login.html", context={"request": request})
 
 @app.get("/home")
-async def home_page(request: Request, email: Annotated[str, Depends(get_current_email)]):
-    return templates.TemplateResponse(name="new_home.html", context={"request": request, "email": email})
+async def home_page(request: Request):
+    return templates.TemplateResponse(name="new_home.html", context={"request": request})
 
 @app.get("/test")
 async def test_page(request: Request):

@@ -50,7 +50,11 @@ async def google_callback(code: str, response: Response):
         # TODO: Save user info to database
         access_token = create_access_token({ "sub": user_info_response.json().get("email") })
         response.set_cookie("access_token", access_token, httponly=True, samesite="Lax")
-        return {"message": "Successfully logged in"}
+        # return {"message": "Successfully logged in"}
+        redirect_url = "http://localhost:8000/home"
+        response.headers["Location"] = redirect_url
+        response.status_code = 302
+        return response
     except Exception:
         return {"message": "Failed to log in"}
 

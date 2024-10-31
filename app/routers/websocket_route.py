@@ -44,7 +44,8 @@ async def websocket_endpoint(websocket: WebSocket, email: Annotated[str, Depends
             message_data = json.loads(data)
             
             if message_data["type"] == "new_chat" and message_data["message"] == 0:    
-                chat_session = crate_new_chat_session(history=[])
+                if not chat_session.history == []:
+                    chat_session = crate_new_chat_session()
             elif message_data["type"] == "message":
                 response = chat_session.send_message(message_data["message"])
                 await manager.send_personal_message(response.text, email)
