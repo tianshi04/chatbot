@@ -8,3 +8,7 @@ python-multipart
 google
 uvicorn
 itsdangerous
+motor
+typing
+pydantic
+pydantic[email]

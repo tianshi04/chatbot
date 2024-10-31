@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Response, Body, HTTPException
+from fastapi import APIRouter, Response, Body, HTTPException, Depends
 from fastapi.responses import RedirectResponse
 import os
 from app.models.google_token import GoogleToken
 from app.utils.token_utils import create_access_token
+from pymongo.database import Database
+from app.database import get_db
+from app.services.user_service import find_user_by_email, create_user
 from dotenv import load_dotenv
 import requests
 from typing import Annotated
@@ -29,7 +32,7 @@ async def login_with_google():
     return RedirectResponse(login_url)
 
 @router.get("/callback")
-async def google_callback(code: str, response: Response):
+async def google_callback(code: str, response: Response, db: Annotated[Database, Depends(get_db)]):
     try:
         token_response = requests.post(
         "https://oauth2.googleapis.com/token",
@@ -47,7 +50,10 @@ async def google_callback(code: str, response: Response):
             "https://www.googleapis.com/oauth2/v1/userinfo",
             headers={"Authorization": f"Bearer {google_access_token}"},
         )
-        # TODO: Save user info to database
+        
+        if find_user_by_email(db, user_info_response.json().get("email")) is None:
+            create_user(db, user_info_response.json())
+        
         access_token = create_access_token({ "sub": user_info_response.json().get("email") })
         response.set_cookie("access_token", access_token, httponly=True, samesite="Lax")
         # return {"message": "Successfully logged in"}
@@ -55,14 +61,18 @@ async def google_callback(code: str, response: Response):
         response.headers["Location"] = redirect_url
         response.status_code = 302
         return response
-    except Exception:
-        return {"message": "Failed to log in"}
+    except Exception as e:
+        return {"message": "Failed to log in", "error": str(e)}
 
 @router.post("/callback")
-async def google_callback_from_web(respone: Response, token: Annotated[GoogleToken, Body()]):
+async def google_callback_from_web(respone: Response, token: Annotated[GoogleToken, Body()], db: Annotated[Database, Depends(get_db)]):
     try:
         idinfo = id_token.verify_oauth2_token(token.token, googleRequest.Request(), CLIENT_ID)
+        
+        
         email = idinfo['email']
+        if find_user_by_email(db, email) is None:
+            create_user(db, idinfo)
         access_token = create_access_token({ "sub": email })
         respone.set_cookie("access_token", access_token, httponly=True, samesite="Lax")
         return {"message": "Successfully logged in"}

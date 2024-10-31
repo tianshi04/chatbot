@@ -57,7 +57,3 @@ async def login_page(request: Request):
 @app.get("/home")
 async def home_page(request: Request):
     return templates.TemplateResponse(name="new_home.html", context={"request": request})
-
-@app.get("/test")
-async def test_page(request: Request):
-    return templates.TemplateResponse(name="test.html", context={"request": request})
