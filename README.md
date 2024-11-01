@@ -4,7 +4,7 @@
 ## Technologies Used:
 
 - Gemini API
-- Flask
+- FastAPI
 - Tailwind CSS
 
 ## Installation
