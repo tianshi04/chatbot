@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Python Assistant</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/assets/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/assets/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/assets/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/public/assets/favicon_io/site.webmanifest">
     <link
       href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css"
       rel="stylesheet"
@@ -16,7 +20,6 @@
         theme: {
           extend: {
             colors: {
-              "token-sidebar-surface-primary": "#f8fafc",
               "token-sidebar-surface-secondary": "#f1f5f9",
               "token-text-primary": "#1f2937",
               "token-text-secondary": "#374151",
@@ -46,9 +49,9 @@
     </style>
   </head>
   <body class="h-screen w-screen">
-    <div class="relative flex h-full w-full overflow-hidden">
+    <div class="relative flex h-full w-full overflow-hidden object-cover">
       <img
-        src="https://play.tailwindcss.com/img/beams.jpg"
+        src="https://wallpapers.com/images/hd/aesthetic-anime-pfp-background-ze2rzoyh9gow6rqd.jpg"
         alt=""
         class="-z-20 absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
       />
@@ -297,7 +300,7 @@
       >
         <main class="relative h-full w-full flex flex-col">
           <div
-            class="flex-none drop-shadow-lg rounded-lg m-3 bg-white/50 ring-1 ring-gray-900/5 draggable no-draggable-children top-0 p-3 flex items-center justify-between z-10 font-semibold"
+            class="flex-none drop-shadow-lg rounded-lg m-3 bg-white/50 ring-1 ring-gray-900/5 draggable no-draggable-children top-0 p-3 flex items-center justify-between z-10 font-semibold max-h-[64px]"
           >
             <div
               class="absolute start-1/2 ltr:-translate-x-1/2 rtl:translate-x-1/2"
@@ -327,10 +330,10 @@
             </button>
           </div>
           <!-- Chat Content -->
-          <div class="grow flex flex-col">
+          <div class="grow flex flex-col drop-shadow-lg rounded-lg m-3 bg-white/50 ring-1 ring-gray-900/5">
             <div
               id="chat-container"
-              class="flex flex-nowrap overflow-y-auto drop-shadow-lg h-[804px] rounded-lg m-3 bg-white/50 ring-1 ring-gray-900/5 flex-col text-sm px-3 pt-3"
+              class="grow flex flex-nowrap overflow-y-auto flex-col text-sm px-3 pt-3 max-h-[calc(100vh-64px-72px-24px-24px)]"
             >
               <!-- first message -->
               <!-- <div class="flex items-start gap-2 justify-start mr-20 ml-3 mt-3">
@@ -348,7 +351,7 @@
                 />
                 <button
                   id="send-btn"
-                  class="btn btn-primary px-3 text-black bg-white hover:bg-black/10 border-0 ring-1 ring-gray-900/5 flex flex-row gap-0 drop-shadow-lg"
+                  class="btn btn-primary px-3 text-black bg-white hover:bg-black/10 border-0 ring-1 ring-gray-900/5 flex flex-row gap-0 drop-shadow-lg bg-white/50 hover:ring-gray-900/50"
                 >
                   <div class="pl-2">Send</div>
                   <svg

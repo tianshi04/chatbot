@@ -8,6 +8,11 @@ fetch("/avatar").then((response) => {
   document.getElementById("user-image").src = data.imgUrl;
 })
 
+function scrollToBottom() {
+  const content = document.getElementById('chat-container');
+  content.scrollTop = content.scrollHeight;
+}
+
 function convertToHTML(text) {
   // Tách từng dòng trong văn bản
   const lines = text.split('\n');
@@ -235,6 +240,7 @@ class NetworkClient {
                 messages.forEach((e) => {
                     addMessageToChatContainer(e.text, e.sender == "user");
                 })
+                scrollToBottom();
                 break;
             case "label":
               let label = data.message.label;
