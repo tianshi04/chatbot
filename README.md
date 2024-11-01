@@ -29,5 +29,4 @@ uvicorn app.main:app --reload
 ```
 
 ## Show Case
-![image](https://github.com/user-attachments/assets/86566788-7f77-4c68-8eac-d43f66049b84)
 
