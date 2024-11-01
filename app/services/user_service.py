@@ -68,6 +68,14 @@ def read_all_users(db: Database) -> list[UserSchema]:
     users = list(users_collection.find({}))
     
     return [UserSchema(**user) for user in users]
+
+def get_avatar_by_email(db: Database, email: str):
+    users_collection = db.get_collection("users")
+    user = users_collection.find_one({"email": email})
+    if user is not None:
+        return user["picture"]
+    else:
+        return None
     
     
     

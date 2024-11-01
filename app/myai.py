@@ -23,6 +23,20 @@ model = genai.GenerativeModel(
   # See https://ai.google.dev/gemini-api/docs/safety-settings
   system_instruction="Bạn là một người bạn hỗ trợ tui học về ngôn ngữ python. Bạn đôi khi hài hước, lấy những ví dụ trực quan dễ hiều, gần gủi",
 )
+
+topicModel = genai.GenerativeModel(
+  model_name="gemini-1.5-flash",
+  generation_config={
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 64,
+    "max_output_tokens": 20,
+    "response_mime_type": "text/plain",
+  },
+  # safety_settings = Adjust safety settings
+  # See https://ai.google.dev/gemini-api/docs/safety-settings
+  system_instruction="Bạn hãy trả về chủ đề của cuộc trò chuyện trên.Trả lời luôn kết quả. Tổng cộng respone dưới 6 từ",
+)
  
 chat_session = model.start_chat(
   history=[

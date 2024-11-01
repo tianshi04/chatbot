@@ -20,10 +20,6 @@ def get_current_email(access_token: Annotated[str, Cookie()] = None):
     )
     
     try:
-        print("SECRET_KEY:", SECRET_KEY)
-        print("ALGORITHM:", ALGORITHM)
-        print("Access Token:", access_token)
-
         payload = jwt.decode(access_token, key=SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:

@@ -43,3 +43,27 @@ def read_all_conversationId(db: Database, email: str) -> list[str]:
     
     
     
+
+def get_conversationIds_by_email(db: Database, email: str, quantity: int) -> list[str]:
+    users_collection = db.get_collection("users")
+    user = users_collection.find_one({"email": email})
+    conversation_ids = user["conversations"]
+    if user is not None:
+        return conversation_ids[-quantity:][::-1]
+    else:
+        return []
+    
+def get_historychat_by_conversationId(db: Database, conversationId: str):
+    conversations_collection = db.get_collection("conversations")
+    conversation = conversations_collection.find_one({"_id": ObjectId(conversationId)})
+    messages = conversation["messages"]
+    history = []
+    for message in messages:
+        history.append({"role": message["sender"], "parts": message["text"]})
+    
+    return history
+
+def get_label_by_conversationId(db: Database, conversationId: str) -> str:
+    conversations_collection = db.get_collection("conversations")
+    conversation = conversations_collection.find_one({"_id": ObjectId(conversationId)})
+    return conversation["label"]

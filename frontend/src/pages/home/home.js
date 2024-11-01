@@ -1,3 +1,13 @@
+fetch("/avatar").then((response) => {
+  if (!response.ok) {
+    throw new Error("Cannot load user image")
+  }
+  
+  return response.json()
+}).then((data) => {
+  document.getElementById("user-image").src = data.imgUrl;
+})
+
 function convertToHTML(text) {
   // Tách từng dòng trong văn bản
   const lines = text.split('\n');
@@ -31,16 +41,27 @@ function addMessageToChatContainer(message, isUserMessage = true) {
   chatContainer.innerHTML += messageHtml
 }
 
-function addChatHistoryToHistoryContainer(label) {
+const historyContainer = document.getElementById("history-container");
+
+historyContainer.addEventListener("click", function(event) {
+  const button = event.target.closest('button[data-conversationId]');
+  
+  if (button) {
+    const conversationId = button.getAttribute("data-conversationId");
+    handleClickConversation(conversationId);
+  }
+});
+
+function addChatHistoryToHistoryContainer(label, conversationId) {
   const historyHtml = `
     <li class="relative z-[15]">
                         <div class="no-draggable group relative rounded-lg active:opacity-90 hover:bg-black/5 fex-row">
-                          <a class="flex items-center gap-2 p-2" data-discover="true" href="/changehistory/322">
+                          <button class="w-full text-left flex items-center gap-2 p-2" data-conversationId="${conversationId}">
                             <div class="relative grow overflow-hidden whitespace-nowrap" dir="auto">
                               ${label}
                               <div class="absolute bottom-0 top-0 to-transparent ltr:right-0 ltr:bg-gradient-to-l rtl:left-0 rtl:bg-gradient-to-r from-token-sidebar-surface-secondary w-10 from-60%"></div>
                             </div>
-                          </a>
+                          </button>
                           <div class="absolute right-0 bottom-0 top-0 items-center gap-1.5 pr-2 ltr:right-0 rtl:left-0 flex">
                             <button class="flex items-center justify-center text-token-text-secondary transition hover:text-token-text-primary radix-state-open:text-token-text-secondary" data-testid="history-item-0-option" type="button" id="radix-:r1b5:" aria-haspopup="menu" aria-expanded="false" data-state="closed">
                               <svg width="24" height="24" fill="#000000" width="64px" height="64px" viewBox="-3.2 -3.2 38.40 38.40" enable-background="new 0 0 32 32" id="Glyph" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" transform="matrix(1, 0, 0, 1, 0, 0)rotate(0)">
@@ -55,6 +76,11 @@ function addChatHistoryToHistoryContainer(label) {
   `;
   const historyContainer = document.getElementById("history-container");
   historyContainer.insertAdjacentHTML("afterbegin", historyHtml)
+}
+
+function handleClickConversation(conversationId) {
+  clearChatContainer()
+  client.loadMessages(conversationId)
 }
 
 function clearChatContainer() {
@@ -162,9 +188,28 @@ class NetworkClient {
         }
     }
 
+    loadConversationIds(quantity) {
+      if (this.ws.readyState === WebSocket.OPEN) {
+        const payload = JSON.stringify({ type: "load_conversationIds", quantity: quantity });
+        this.ws.send(payload);
+      } else {
+        console.error("WebSocket is not open. Ready state: " + this.ws.readyState);
+      }
+    }
+
+    loadMessages(conversationId) {
+      if (this.ws.readyState === WebSocket.OPEN) {
+        const payload = JSON.stringify({ type: "load_messages", conversationId: conversationId });
+        this.ws.send(payload);
+      } else {
+        console.error("WebSocket is not open. Ready state: " + this.ws.readyState);
+      }
+    }
+
     onOpen(event) {
         this.isConnected = true;
         console.log("Connected to WebSocket server");
+        this.loadConversationIds(10);
     }
 
     onMessage(event) {
@@ -179,6 +224,22 @@ class NetworkClient {
             case "notification":
                 alert("Notification from server:", data.message);
                 break;
+            case "conversationIds":
+                let conversationIds = data.message;
+                conversationIds.forEach((e) => {
+                  addChatHistoryToHistoryContainer(e.label, e.conversationId);
+                })
+                break;
+            case "conversation_messages":
+                let messages = data.message;
+                messages.forEach((e) => {
+                    addMessageToChatContainer(e.text, e.sender == "user");
+                })
+                break;
+            case "label":
+              let label = data.message.label;
+              let conversationId = data.message.conversationId;
+              addChatHistoryToHistoryContainer(label, conversationId);
             default:
                 console.warn("Unknown message type:", data.type);
                 break;

@@ -14,7 +14,7 @@ from pymongo.database import Database
 from app.database import get_db
 from app.schemas.ConversationSchema import ConversationSchema
 from app.schemas.UserSchema import UserSchema
-from app.services.user_service import find_user_by_email
+from app.services.user_service import find_user_by_email, get_avatar_by_email
 
 # Load .env file
 load_dotenv()
@@ -60,10 +60,12 @@ async def login_page(request: Request):
     return templates.TemplateResponse(name="login.html", context={"request": request})
 
 @app.get("/home")
-async def home_page(request: Request, db: Annotated[Database, Depends(get_db)], email: Annotated[str, Depends(get_current_email)]):
-    user_data = find_user_by_email(db, email)
-    return templates.TemplateResponse(name="new_home.html", context={"request": request, "user_data": user_data})
+async def home_page(request: Request):
+    return templates.TemplateResponse(name="home.html", context={"request": request})
 
+@app.get("/avatar")
+async def get_avatar(email: Annotated[str, Depends(get_current_email)], db: Annotated[Database, Depends(get_db)]):
+    return { "imgUrl": get_avatar_by_email(db, email) }
 # @app.get("/db/users")
 # async def get_users(db: Annotated[Database, Depends(get_db)]):
 #     users = db.get_collection("users")
