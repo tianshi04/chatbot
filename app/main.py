@@ -12,6 +12,8 @@ from app.dependencies import get_current_email
 from app.routers import websocket_route
 from pymongo.database import Database
 from app.database import get_db
+from app.schemas.ConversationSchema import ConversationSchema
+from app.schemas.UserSchema import UserSchema
 from app.services.user_service import find_user_by_email
 
 # Load .env file
@@ -61,3 +63,17 @@ async def login_page(request: Request):
 async def home_page(request: Request, db: Annotated[Database, Depends(get_db)], email: Annotated[str, Depends(get_current_email)]):
     user_data = find_user_by_email(db, email)
     return templates.TemplateResponse(name="new_home.html", context={"request": request, "user_data": user_data})
+
+# @app.get("/db/users")
+# async def get_users(db: Annotated[Database, Depends(get_db)]):
+#     users = db.get_collection("users")
+#     userlist = list(users.find({}))
+#     data = [UserSchema(**user) for user in userlist]
+#     return data
+
+# @app.get("/db/conversations")
+# async def get_conversations(db: Annotated[Database, Depends(get_db)]):
+#     conversations = db.get_collection("conversations")
+#     conversationlist = list(conversations.find({}))
+#     data = [ConversationSchema(**conversation) for conversation in conversationlist]
+#     return data
